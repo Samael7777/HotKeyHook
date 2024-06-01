@@ -41,25 +41,19 @@ public class HotKeyHook : IDisposable
 
     private void OnMessageCaptured(object? sender, WindowsMessageArgs e)
     {
-        var message = e.Msg;
-        var wParam = e.WParam;
-        var lParam = e.LParam;
+        if (e.Msg != WM_HOTKEY) return;
 
-        if (message != WM_HOTKEY) return;
-        var id = (int)wParam;
-
-        var hotKeyData = (uint)lParam; 
-
+        var id = (int)e.WParam;
+        var hotKeyData = (uint)e.LParam; 
         var modifiers = (Modifiers)(hotKeyData & 0xFFFF);
         var key = (Key)(hotKeyData >> 16);
-        
+
         var hotkey = new HotKey(modifiers, key);
-        
-        var hkArgs = new HotKeyEventArgs(id, 
+        var hotKeyEventArgs = new HotKeyEventArgs(id, 
             id < 0 ? null : hotkey, 
             id < 0 ? (IdHot)id : IdHot.None);
 
-        HotKeyCaptured?.Invoke(this, hkArgs);
+        HotKeyCaptured?.Invoke(this, hotKeyEventArgs);
     }
 
     private void RegisterNewHotKey(int id, HotKey hotKey)
