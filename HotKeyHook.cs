@@ -1,7 +1,9 @@
 ﻿using System.Collections.Immutable;
 using System.ComponentModel;
 using System.Runtime.InteropServices;
-using HotKeyHook.PInvoke;
+using Windows.Win32;
+using Windows.Win32.Foundation;
+using Windows.Win32.UI.Input.KeyboardAndMouse;
 using VirtualKeys;
 
 namespace HotKeyHook;
@@ -64,7 +66,8 @@ public class HotKeyHook : IDisposable
             if (wndHandle == IntPtr.Zero)
                 throw new ApplicationException("Can't get message window handle.");
             
-            if (User32.RegisterHotKey(wndHandle, id, hotKey.Modifiers, hotKey.Key)) return;
+            if (WinApi.RegisterHotKey((HWND)wndHandle, id, (HOT_KEY_MODIFIERS)hotKey.Modifiers, (uint)hotKey.Key)) 
+                return;
 
             var error = Marshal.GetLastWin32Error();
             throw new Win32Exception(error, "Error registering new hotkey.");
@@ -78,7 +81,7 @@ public class HotKeyHook : IDisposable
             var wndHandle = _msgWindow.WindowHandle;
             if (wndHandle == IntPtr.Zero) return;
 
-            if(User32.UnregisterHotKey(wndHandle, id)) return;
+            if(WinApi.UnregisterHotKey((HWND)wndHandle, id)) return;
 
             var error = Marshal.GetLastWin32Error();
             throw new Win32Exception(error, "Error unregistering hotkey.");

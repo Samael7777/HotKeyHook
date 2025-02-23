@@ -12,5 +12,4 @@ public class WindowsMessageArgs : EventArgs
     public uint Msg { get; }
     public IntPtr WParam { get; }
     public IntPtr LParam { get; }
-
 }
