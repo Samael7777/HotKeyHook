@@ -73,7 +73,6 @@ public class HotKeyHook : IDisposable
 
     private void UnregisterHotKey(int id)
     {
-
         _msgWindow.Invoke(() =>
         {
             var wndHandle = _msgWindow.WindowHandle;
